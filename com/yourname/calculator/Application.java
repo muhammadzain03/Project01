@@ -8,7 +8,7 @@ public class Application {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("\nEnter operation (+, -, *, /, ! for factorial, pow, sqrt, log, log10, sin, cos, tan) or 'exit' to quit:");
+            System.out.println("\nEnter operation (+, -, *, /, ! for factorial, pow, sqrt, log, log10, sin, cos, tan, perm) or 'exit' to quit:");
             String operation = scanner.nextLine();
 
             if (operation.equalsIgnoreCase("exit")) {
@@ -55,6 +55,20 @@ public class Application {
                     default:
                         System.out.println("Invalid operation.");
                         break;
+                }
+            } else if (operation.equals("perm")) {
+                // Permutations calculation
+                System.out.println("Enter total number of items:");
+                int totalItems = scanner.nextInt();
+                System.out.println("Enter number of items to select:");
+                int selectedItems = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                
+                try {
+                    long result = permutationsRecursive(totalItems, selectedItems);
+                    System.out.println("Permutations: " + result);
+                } catch (IllegalArgumentException e) {
+                    System.out.println(e.getMessage());
                 }
             } else {
                 System.out.println("Enter two numbers:");
@@ -105,6 +119,21 @@ public class Application {
         int progress = (int) (((originalNum - num + 1) / (double) originalNum) * 100);
         System.out.print("\rCalculating factorial: " + progress + "%");
         return num * factorialHelper(originalNum, num - 1);
+    }
+
+    public static long permutationsRecursive(int totalItems, int selectedItems) {
+        // Error handling for invalid inputs
+        if (selectedItems < 0 || selectedItems > totalItems || selectedItems > 100) {
+            throw new IllegalArgumentException("Invalid number of selected items.");
+        }
+        
+        // Base case
+        if (selectedItems == 0) {
+            return 1;
+        }
+        
+        // Recursive calculation
+        return totalItems * permutationsRecursive(totalItems - 1, selectedItems - 1);
     }
 
     public static double power(double base, double exponent) {
