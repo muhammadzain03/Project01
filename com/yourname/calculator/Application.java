@@ -3,95 +3,139 @@ package com.yourname.calculator;
 import java.util.Scanner;
 
 public class Application {
+
     public static void main(String[] args) {
-        if (args.length == 0) {
-            // Interactive mode
-            Scanner scanner = new Scanner(System.in);
-            while (true) {
-                System.out.println("Enter operation (+, -, *, /, ! for factorial) or 'exit' to quit:");
-                String operation = scanner.nextLine();
-                if (operation.equals("exit")) {
-                    break;
-                }
-                handleOperation(operation, scanner);
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\nEnter operation (+, -, *, /, ! for factorial, pow, sqrt, log, log10, sin, cos, tan) or 'exit' to quit:");
+            String operation = scanner.nextLine();
+
+            if (operation.equalsIgnoreCase("exit")) {
+                System.out.println("Exiting calculator...");
+                break;
             }
-            scanner.close();
-        } else {
-            // CLI arguments mode
-            handleCLIArgs(args);
-        }
-    }
 
-    public static void handleOperation(String operation, Scanner scanner) {
-        int a, b;
-        switch (operation) {
-            case "+":
-                System.out.println("Enter two numbers:");
-                a = scanner.nextInt();
-                b = scanner.nextInt();
-                System.out.println("Result: " + add(a, b));
-                break;
-            case "-":
-                System.out.println("Enter two numbers:");
-                a = scanner.nextInt();
-                b = scanner.nextInt();
-                System.out.println("Result: " + subtract(a, b));
-                break;
-            case "*":
-                System.out.println("Enter two numbers:");
-                a = scanner.nextInt();
-                b = scanner.nextInt();
-                System.out.println("Result: " + multiply(a, b));
-                break;
-            case "/":
-                System.out.println("Enter two numbers:");
-                a = scanner.nextInt();
-                b = scanner.nextInt();
-                try {
-                    System.out.println("Result: " + divide(a, b));
-                } catch (IllegalArgumentException e) {
-                    System.out.println(e.getMessage());
-                }
-                break;
-            case "!":
+            if (operation.equals("!")) {
                 System.out.println("Enter a number:");
-                a = scanner.nextInt();
-                System.out.println("Result: " + factorial(a));
-                break;
-            default:
-                System.out.println("Invalid operation");
+                int num = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                System.out.println("Result: " + factorial(num));
+            } else if (operation.equals("pow")) {
+                System.out.println("Enter base:");
+                double base = scanner.nextDouble();
+                System.out.println("Enter exponent:");
+                double exponent = scanner.nextDouble();
+                scanner.nextLine(); // Consume newline
+                System.out.println("Result: " + power(base, exponent));
+            } else if (operation.equals("sqrt") || operation.equals("log") || operation.equals("log10")
+                    || operation.equals("sin") || operation.equals("cos") || operation.equals("tan")) {
+                System.out.println("Enter number:");
+                double num = scanner.nextDouble();
+                scanner.nextLine(); // Consume newline
+                switch (operation.toLowerCase()) {
+                    case "sqrt":
+                        System.out.println("Result: " + sqrt(num));
+                        break;
+                    case "log":
+                        System.out.println("Result: " + log(num));
+                        break;
+                    case "log10":
+                        System.out.println("Result: " + log10(num));
+                        break;
+                    case "sin":
+                        System.out.println("Result: " + sin(num));
+                        break;
+                    case "cos":
+                        System.out.println("Result: " + cos(num));
+                        break;
+                    case "tan":
+                        System.out.println("Result: " + tan(num));
+                        break;
+                    default:
+                        System.out.println("Invalid operation.");
+                        break;
+                }
+            } else {
+                System.out.println("Enter two numbers:");
+                int a = scanner.nextInt();
+                int b = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                switch (operation) {
+                    case "+":
+                        System.out.println("Result: " + add(a, b));
+                        break;
+                    case "-":
+                        System.out.println("Result: " + subtract(a, b));
+                        break;
+                    case "*":
+                        System.out.println("Result: " + multiply(a, b));
+                        break;
+                    case "/":
+                        try {
+                            System.out.println("Result: " + divide(a, b));
+                        } catch (IllegalArgumentException e) {
+                            System.out.println(e.getMessage());
+                        }
+                        break;
+                    default:
+                        System.out.println("Invalid operation.");
+                        break;
+                }
+            }
         }
-        scanner.nextLine(); // Clear the buffer
+
+        scanner.close();
     }
 
-    public static void handleCLIArgs(String[] args) {
-        String operation = args[0];
-        int a = Integer.parseInt(args[1]);
-        int b = args.length > 2 ? Integer.parseInt(args[2]) : 0;
-
-        switch (operation) {
-            case "+":
-                System.out.println("Result: " + add(a, b));
-                break;
-            case "-":
-                System.out.println("Result: " + subtract(a, b));
-                break;
-            case "*":
-                System.out.println("Result: " + multiply(a, b));
-                break;
-            case "/":
-                try {
-                    System.out.println("Result: " + divide(a, b));
-                } catch (IllegalArgumentException e) {
-                    System.out.println(e.getMessage());
-                }
-                break;
-            case "!":
-                System.out.println("Result: " + factorial(a));
-                break;
-            default:
-                System.out.println("Invalid operation");
+    public static long factorial(int num) {
+        if (num < 0) {
+            System.out.println("Factorial of negative number is undefined.");
+            return 0;
         }
+        return factorialHelper(num, num);
+    }
+
+    private static long factorialHelper(int originalNum, int num) {
+        if (num <= 1) {
+            System.out.print("\rCalculating factorial: 100%");
+            return 1;
+        }
+
+        int progress = (int) (((originalNum - num + 1) / (double) originalNum) * 100);
+        System.out.print("\rCalculating factorial: " + progress + "%");
+        return num * factorialHelper(originalNum, num - 1);
+    }
+
+    public static double power(double base, double exponent) {
+        return Math.pow(base, exponent);
+    }
+
+    public static double sqrt(double number) {
+        return Math.sqrt(number);
+    }
+
+    public static double log(double number) {
+        return Math.log(number);
+    }
+
+    public static double log10(double number) {
+        return Math.log10(number);
+    }
+
+    public static double sin(double angleDegrees) {
+        double angleRadians = Math.toRadians(angleDegrees);
+        return Math.sin(angleRadians);
+    }
+
+    public static double cos(double angleDegrees) {
+        double angleRadians = Math.toRadians(angleDegrees);
+        return Math.cos(angleRadians);
+    }
+
+    public static double tan(double angleDegrees) {
+        double angleRadians = Math.toRadians(angleDegrees);
+        return Math.tan(angleRadians);
     }
 
     public static int add(int a, int b) {
@@ -111,12 +155,5 @@ public class Application {
             throw new IllegalArgumentException("Division by zero");
         }
         return (double) a / b;
-    }
-
-    public static int factorial(int n) {
-        if (n <= 1) {
-            return 1;
-        }
-        return n * factorial(n - 1);
     }
 }
